@@ -256,3 +256,31 @@ label {
 .menu-scroll-area::-webkit-scrollbar-track {
   background: transparent;
 }
+
+/* ===================== FORM LAYOUTS ===================== */
+.reservation-form {
+  padding: 2.5rem;
+}
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.form-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+  .reservation-form {
+    padding: 1.5rem;
+  }
+  .form-grid-2, .form-grid-3 {
+    grid-template-columns: 1fr;
+  }
+}

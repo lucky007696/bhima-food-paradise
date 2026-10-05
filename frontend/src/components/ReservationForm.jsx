@@ -87,11 +87,11 @@ const ReservationForm = () => {
           ) : (
             <form
               onSubmit={handleSubmit}
+              className="reservation-form"
               style={{
                 background: 'rgba(255,255,255,0.03)',
                 border: '1px solid rgba(255,255,255,0.08)',
                 borderRadius: '20px',
-                padding: '2.5rem',
               }}
             >
               {status === 'error' && (
@@ -100,7 +100,7 @@ const ReservationForm = () => {
                 </div>
               )}
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem', marginBottom: '1.25rem' }}>
+              <div className="form-grid-2">
                 <div>
                   <label><User size={13} style={{ display: 'inline', marginRight: '0.4rem' }} />Name</label>
                   <input type="text" name="name" required value={formData.name} onChange={handleChange} placeholder="Your full name" />
@@ -111,7 +111,7 @@ const ReservationForm = () => {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1.25rem', marginBottom: '2rem' }}>
+              <div className="form-grid-3">
                 <div>
                   <label><Calendar size={13} style={{ display: 'inline', marginRight: '0.4rem' }} />Date</label>
                   <input type="date" name="date" required value={formData.date} onChange={handleChange} />
