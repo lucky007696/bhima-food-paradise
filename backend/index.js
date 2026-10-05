@@ -15,20 +15,46 @@ app.get('/api/menu', (req, res) => {
   res.json(menuItems);
 });
 
-const reservations = [];
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log('✅ MongoDB Connected Successfully'))
+  .catch(err => console.error('❌ MongoDB Connection Error:', err));
 
-app.post('/api/reservations', (req, res) => {
+// Define Reservation Schema and Model
+const reservationSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  phone: { type: String, required: true },
+  date: { type: String, required: true },
+  time: { type: String, required: true },
+  guests: { type: String, required: true },
+  status: { type: String, default: 'Pending' },
+  createdAt: { type: Date, default: Date.now }
+});
+
+const Reservation = mongoose.model('Reservation', reservationSchema);
+
+app.post('/api/reservations', async (req, res) => {
   const { name, phone, date, time, guests } = req.body;
   if (!name || !phone || !date || !time || !guests) {
     return res.status(400).json({ error: 'All fields are required.' });
   }
-  const newReservation = { _id: Date.now().toString(), name, phone, date, time, guests, status: 'Pending', createdAt: new Date().toISOString() };
-  reservations.push(newReservation);
-  res.status(201).json({ message: 'Reservation confirmed', reservation: newReservation });
+  
+  try {
+    const newReservation = new Reservation({ name, phone, date, time, guests });
+    await newReservation.save();
+    res.status(201).json({ message: 'Reservation confirmed', reservation: newReservation });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to save reservation.' });
+  }
 });
 
-app.get('/api/admin/reservations', (req, res) => {
-  res.json(reservations);
+app.get('/api/admin/reservations', async (req, res) => {
+  try {
+    const reservations = await Reservation.find().sort({ createdAt: -1 });
+    res.json(reservations);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch reservations.' });
+  }
 });
 
 const PORT = process.env.PORT || 5000;
