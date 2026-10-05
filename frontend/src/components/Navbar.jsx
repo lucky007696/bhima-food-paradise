@@ -19,6 +19,18 @@ const Navbar = ({ logoUrl = '/logo.png' }) => {
     { href: '#reservation', label: 'Reservation' },
   ];
 
+  const handleNavClick = (e, href) => {
+    e.preventDefault();
+    setIsOpen(false);
+    const target = document.querySelector(href);
+    if (target) {
+      window.scrollTo({
+        top: target.offsetTop - 80,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   return (
     <motion.nav
       initial={{ y: -100, opacity: 0 }}
@@ -96,6 +108,7 @@ const Navbar = ({ logoUrl = '/logo.png' }) => {
             <motion.a
               key={link.href}
               href={link.href}
+              onClick={(e) => handleNavClick(e, link.href)}
               whileHover={{ color: 'var(--primary)' }}
               style={{
                 color: 'rgba(255,255,255,0.85)',
@@ -122,6 +135,7 @@ const Navbar = ({ logoUrl = '/logo.png' }) => {
           </a>
           <motion.a
             href="#reservation"
+            onClick={(e) => handleNavClick(e, '#reservation')}
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.96 }}
             className="btn-primary"
@@ -163,7 +177,7 @@ const Navbar = ({ logoUrl = '/logo.png' }) => {
                 <a
                   key={link.href}
                   href={link.href}
-                  onClick={() => setIsOpen(false)}
+                  onClick={(e) => handleNavClick(e, link.href)}
                   style={{
                     color: 'var(--text-light)',
                     textDecoration: 'none',
@@ -177,7 +191,7 @@ const Navbar = ({ logoUrl = '/logo.png' }) => {
                   {link.label}
                 </a>
               ))}
-              <a href="#reservation" onClick={() => setIsOpen(false)} className="btn-primary" style={{ textAlign: 'center', marginTop: '0.5rem' }}>
+              <a href="#reservation" onClick={(e) => handleNavClick(e, '#reservation')} className="btn-primary" style={{ textAlign: 'center', marginTop: '0.5rem' }}>
                 Book a Table
               </a>
             </div>
