@@ -2,17 +2,51 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const multer = require('multer');
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-// Load the comprehensive menu from external file
-const menuItems = require('./menuData');
+// Configure Cloudinary (Automatically uses CLOUDINARY_URL from .env if present)
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'bhima_menu',
+    allowedFormats: ['jpeg', 'png', 'jpg', 'webp']
+  }
+});
+const upload = multer({ storage: storage });
 
-app.get('/api/menu', (req, res) => {
-  res.json(menuItems);
+// Define Menu Schema
+const menuItemSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  description: { type: String, required: true },
+  price: { type: String, required: true },
+  category: { type: String, required: true },
+  image: { type: String, required: true },
+  isVeg: { type: Boolean, default: false }
+});
+const MenuItem = mongoose.model('MenuItem', menuItemSchema);
+
+// Get Menu (with automatic DB seeding if empty)
+app.get('/api/menu', async (req, res) => {
+  try {
+    let items = await MenuItem.find();
+    if (items.length === 0) {
+      // Seed with initial data if empty
+      const initialMenu = require('./menuData');
+      await MenuItem.insertMany(initialMenu);
+      items = await MenuItem.find();
+    }
+    res.json(items);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch menu' });
+  }
 });
 
 // Connect to MongoDB
@@ -74,6 +108,38 @@ app.delete('/api/admin/reservations/:id', adminAuth, async (req, res) => {
     res.json({ message: 'Reservation removed successfully' });
   } catch (err) {
     res.status(500).json({ error: 'Failed to remove reservation.' });
+  }
+});
+
+// Admin Add Menu Item
+app.post('/api/admin/menu', adminAuth, upload.single('image'), async (req, res) => {
+  try {
+    const { name, description, price, category, isVeg } = req.body;
+    const image = req.file ? req.file.path : '';
+    
+    if (!name || !price || !category || !image) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+    
+    const newItem = new MenuItem({
+      name, description, price, category, image, isVeg: isVeg === 'true'
+    });
+    
+    await newItem.save();
+    res.status(201).json(newItem);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to create menu item' });
+  }
+});
+
+// Admin Delete Menu Item
+app.delete('/api/admin/menu/:id', adminAuth, async (req, res) => {
+  try {
+    await MenuItem.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Item deleted' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to delete item' });
   }
 });
 
