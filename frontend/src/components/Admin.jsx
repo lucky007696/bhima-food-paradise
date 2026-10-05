@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Users, Calendar, Clock, Phone, User, Home, PlusCircle, Image as ImageIcon, Trash2, Edit } from 'lucide-react';
+import { Users, Calendar, Clock, Phone, User, Home, PlusCircle, Trash2, Edit, Settings as SettingsIcon, Image as ImageIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState('reservations');
@@ -20,6 +21,10 @@ const Admin = () => {
   });
   const [isUploading, setIsUploading] = useState(false);
   const [editingMenuId, setEditingMenuId] = useState(null);
+
+  // Settings State
+  const [logoFile, setLogoFile] = useState(null);
+  const [isLogoUploading, setIsLogoUploading] = useState(false);
 
   const fetchData = async (password) => {
     setLoading(true);
@@ -74,9 +79,10 @@ const Admin = () => {
         headers: { 'x-admin-password': password }
       });
       setReservations(reservations.filter(res => res._id !== id));
+      toast.success('Reservation Completed & Removed!');
     } catch (err) {
       console.error('Failed to complete reservation:', err);
-      alert('Failed to remove reservation. Please try again.');
+      toast.error('Failed to remove reservation. Please try again.');
     }
   };
 
@@ -101,7 +107,7 @@ const Admin = () => {
 
   const handleMenuSubmit = async (e) => {
     e.preventDefault();
-    if (!editingMenuId && !menuForm.image) return alert('Please select an image file first.');
+    if (!editingMenuId && !menuForm.image) return toast.error('Please select an image file first.');
 
     const formData = new FormData();
     formData.append('name', menuForm.name);
@@ -114,6 +120,8 @@ const Admin = () => {
     }
 
     setIsUploading(true);
+    const loadingToast = toast.loading(editingMenuId ? 'Updating menu item...' : 'Uploading menu item...');
+    
     try {
       const password = sessionStorage.getItem('adminPassword');
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -122,12 +130,12 @@ const Admin = () => {
         await axios.put(`${API_URL}/api/admin/menu/${editingMenuId}`, formData, {
           headers: { 'x-admin-password': password, 'Content-Type': 'multipart/form-data' }
         });
-        alert('Menu Item Updated Successfully!');
+        toast.success('Menu Item Updated Successfully!', { id: loadingToast });
       } else {
         await axios.post(`${API_URL}/api/admin/menu`, formData, {
           headers: { 'x-admin-password': password, 'Content-Type': 'multipart/form-data' }
         });
-        alert('Menu Item Added Successfully!');
+        toast.success('Menu Item Added Successfully!', { id: loadingToast });
       }
       
       setMenuForm({ name: '', description: '', price: '', category: 'Starters', isVeg: 'true', image: null });
@@ -138,7 +146,7 @@ const Admin = () => {
       
     } catch (err) {
       console.error(err);
-      alert('Failed to save menu item.');
+      toast.error('Failed to save menu item.', { id: loadingToast });
     } finally {
       setIsUploading(false);
     }
@@ -153,9 +161,36 @@ const Admin = () => {
         headers: { 'x-admin-password': password }
       });
       setMenuItems(menuItems.filter(item => item._id !== id));
+      toast.success('Menu item deleted.');
     } catch (err) {
       console.error(err);
-      alert('Failed to delete menu item.');
+      toast.error('Failed to delete menu item.');
+    }
+  };
+
+  const handleLogoSubmit = async (e) => {
+    e.preventDefault();
+    if (!logoFile) return toast.error('Please select a logo file first.');
+    
+    setIsLogoUploading(true);
+    const loadingToast = toast.loading('Uploading new logo...');
+    
+    try {
+      const formData = new FormData();
+      formData.append('logo', logoFile);
+      const password = sessionStorage.getItem('adminPassword');
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      
+      await axios.post(`${API_URL}/api/admin/settings/logo`, formData, {
+        headers: { 'x-admin-password': password, 'Content-Type': 'multipart/form-data' }
+      });
+      toast.success('Site Logo Updated! Refresh to see changes.', { id: loadingToast });
+      setLogoFile(null);
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to update logo.', { id: loadingToast });
+    } finally {
+      setIsLogoUploading(false);
     }
   };
 
@@ -212,7 +247,7 @@ const Admin = () => {
         </div>
 
         {/* Tabs */}
-        <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem' }}>
           <button 
             onClick={() => setActiveTab('reservations')}
             style={{ padding: '0.75rem 1.5rem', background: activeTab === 'reservations' ? 'var(--primary)' : 'rgba(255,255,255,0.1)', color: activeTab === 'reservations' ? 'black' : 'white', borderRadius: '8px', border: 'none', fontWeight: 600, cursor: 'pointer', fontFamily: "'Outfit', sans-serif" }}
@@ -224,6 +259,12 @@ const Admin = () => {
             style={{ padding: '0.75rem 1.5rem', background: activeTab === 'menu' ? 'var(--primary)' : 'rgba(255,255,255,0.1)', color: activeTab === 'menu' ? 'black' : 'white', borderRadius: '8px', border: 'none', fontWeight: 600, cursor: 'pointer', fontFamily: "'Outfit', sans-serif" }}
           >
             Manage Menu
+          </button>
+          <button 
+            onClick={() => setActiveTab('settings')}
+            style={{ padding: '0.75rem 1.5rem', background: activeTab === 'settings' ? 'var(--primary)' : 'rgba(255,255,255,0.1)', color: activeTab === 'settings' ? 'black' : 'white', borderRadius: '8px', border: 'none', fontWeight: 600, cursor: 'pointer', fontFamily: "'Outfit', sans-serif" }}
+          >
+            Site Settings
           </button>
         </div>
 
@@ -264,7 +305,7 @@ const Admin = () => {
               ))}
             </div>
           )
-        ) : (
+        ) : activeTab === 'menu' ? (
           /* MENU TAB */
           <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '3rem' }}>
             {/* Add/Edit Menu Form */}
@@ -364,6 +405,31 @@ const Admin = () => {
                 )
               ))}
 
+            </div>
+          </div>
+        ) : (
+          /* SETTINGS TAB */
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
+            <div style={{ background: 'var(--bg-card)', padding: '2rem', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)' }}>
+              <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--primary)', marginBottom: '1.5rem', fontFamily: "'Playfair Display', serif" }}>
+                <ImageIcon size={20} /> Update Website Logo
+              </h3>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginBottom: '1.5rem', lineHeight: 1.6 }}>
+                Upload a new logo image here. This will update the logo shown in the Navbar, Hero section, and Footer automatically. Recommended size is a transparent PNG or WebP.
+              </p>
+              <form onSubmit={handleLogoSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div>
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    onChange={e => setLogoFile(e.target.files[0])} 
+                    style={{ width: '100%', padding: '0.8rem', background: 'rgba(0,0,0,0.3)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', color: 'white' }} 
+                  />
+                </div>
+                <button type="submit" disabled={isLogoUploading} className="btn-primary" style={{ opacity: isLogoUploading ? 0.7 : 1, padding: '0.8rem' }}>
+                  {isLogoUploading ? 'Uploading...' : 'Update Logo'}
+                </button>
+              </form>
             </div>
           </div>
         )}

@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 
-const Hero = () => {
+const Hero = ({ logoUrl = '/logo.png' }) => {
   return (
     <section
       id="home"
@@ -47,7 +47,7 @@ const Hero = () => {
           }}
         >
           <img
-            src="/logo.png"
+            src={logoUrl}
             alt="Bhima Food Paradise"
             style={{
               maxWidth: '380px',

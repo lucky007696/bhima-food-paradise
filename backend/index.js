@@ -32,6 +32,25 @@ const menuItemSchema = new mongoose.Schema({
 });
 const MenuItem = mongoose.model('MenuItem', menuItemSchema);
 
+// Define Settings Schema (for logo, etc.)
+const settingsSchema = new mongoose.Schema({
+  key: { type: String, unique: true },
+  value: String
+});
+const Settings = mongoose.model('Settings', settingsSchema);
+
+// Get Settings
+app.get('/api/settings', async (req, res) => {
+  try {
+    const settings = await Settings.find();
+    const settingsMap = {};
+    settings.forEach(s => settingsMap[s.key] = s.value);
+    res.json(settingsMap);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch settings' });
+  }
+});
+
 // Get Menu (with automatic DB seeding if empty)
 app.get('/api/menu', async (req, res) => {
   try {
@@ -162,6 +181,23 @@ app.put('/api/admin/menu/:id', adminAuth, upload.single('image'), async (req, re
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to update item' });
+  }
+});
+
+// Admin Update Logo
+app.post('/api/admin/settings/logo', adminAuth, upload.single('logo'), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: 'No image uploaded' });
+    
+    await Settings.findOneAndUpdate(
+      { key: 'logo' }, 
+      { value: req.file.path }, 
+      { upsert: true }
+    );
+    res.json({ message: 'Logo updated successfully', logoUrl: req.file.path });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to update logo' });
   }
 });
 

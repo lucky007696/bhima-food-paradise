@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Menu as MenuIcon, X, Phone } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const Navbar = () => {
+const Navbar = ({ logoUrl = '/logo.png' }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -52,7 +52,7 @@ const Navbar = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.7 }}
                 transition={{ duration: 0.3 }}
-                src="/logo.png"
+                src={logoUrl}
                 alt="Bhima Food Paradise"
                 style={{
                   height: '55px',

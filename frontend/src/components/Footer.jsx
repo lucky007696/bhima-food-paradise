@@ -15,7 +15,7 @@ const FacebookIcon = ({ size = 16 }) => (
 );
 
 
-const Footer = () => {
+const Footer = ({ logoUrl = '/logo.png' }) => {
   return (
     <footer style={{ background: '#06050a', borderTop: '1px solid rgba(245,158,11,0.1)' }}>
 
@@ -26,7 +26,7 @@ const Footer = () => {
           {/* Brand */}
           <div>
             <a href="#home" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
-              <img src="/logo.png" alt="Bhima" style={{ height: '55px', filter: 'drop-shadow(0 0 8px rgba(245,158,11,0.4))' }} />
+              <img src={logoUrl} alt="Bhima" style={{ height: '55px', filter: 'drop-shadow(0 0 8px rgba(245,158,11,0.4))' }} />
             </a>
             <p style={{ fontFamily: "'Outfit', sans-serif", color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: 1.8, marginBottom: '1.5rem' }}>
               Inspired by legend, crafted for you. The ultimate destination for authentic flavors and premium dining in Inkollu, Andhra Pradesh.
