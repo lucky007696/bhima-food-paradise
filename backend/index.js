@@ -99,6 +99,21 @@ app.post('/api/reservations', async (req, res) => {
   try {
     const newReservation = new Reservation({ name, phone, date, time, guests });
     await newReservation.save();
+
+    // Send WhatsApp Notification via CallMeBot
+    try {
+      const callMeBotPhone = process.env.CALLMEBOT_PHONE;
+      const callMeBotApiKey = process.env.CALLMEBOT_API_KEY;
+      if (callMeBotPhone && callMeBotApiKey) {
+        const text = `🔔 *New Table Reservation!*\n\n*Name:* ${name}\n*Phone:* ${phone}\n*Date:* ${new Date(date).toLocaleDateString()}\n*Time:* ${time}\n*Guests:* ${guests} people`;
+        const encodedText = encodeURIComponent(text);
+        const url = `https://api.callmebot.com/whatsapp.php?phone=${callMeBotPhone}&text=${encodedText}&apikey=${callMeBotApiKey}`;
+        fetch(url).catch(e => console.error("CallMeBot error:", e.message));
+      }
+    } catch (waErr) {
+      console.error("WhatsApp notification failed:", waErr);
+    }
+
     res.status(201).json({ message: 'Reservation confirmed', reservation: newReservation });
   } catch (err) {
     res.status(500).json({ error: 'Failed to save reservation.' });
