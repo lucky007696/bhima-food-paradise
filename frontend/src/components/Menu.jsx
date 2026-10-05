@@ -249,7 +249,7 @@ const Menu = () => {
                                 border: '1px solid rgba(245,158,11,0.2)',
                               }}>
                                 <img
-                                  src={categoryImages[category]}
+                                  src={item.image && !item.image.includes('placehold.co') ? item.image : categoryImages[category]}
                                   alt={item.name}
                                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                 />
