@@ -27,7 +27,7 @@ const menuItemSchema = new mongoose.Schema({
   description: { type: String, required: true },
   price: { type: String, required: true },
   category: { type: String, required: true },
-  image: { type: String, required: true },
+  image: { type: String, default: 'https://placehold.co/400x300?text=No+Image' },
   isVeg: { type: Boolean, default: false }
 });
 const MenuItem = mongoose.model('MenuItem', menuItemSchema);
@@ -39,7 +39,11 @@ app.get('/api/menu', async (req, res) => {
     if (items.length === 0) {
       // Seed with initial data if empty
       const initialMenu = require('./menuData');
-      await MenuItem.insertMany(initialMenu);
+      const cleanedMenu = initialMenu.map(item => {
+        const { _id, id, ...rest } = item;
+        return rest;
+      });
+      await MenuItem.insertMany(cleanedMenu);
       items = await MenuItem.find();
     }
     res.json(items);
