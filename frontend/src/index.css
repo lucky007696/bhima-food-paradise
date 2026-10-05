@@ -283,4 +283,54 @@ label {
   .form-grid-2, .form-grid-3 {
     grid-template-columns: 1fr;
   }
+  
+  .whatsapp-container {
+    bottom: 1rem;
+    right: 1rem;
+  }
+  .call-container {
+    bottom: 1rem;
+    left: 1rem;
+  }
+  .floating-btn {
+    width: 48px !important;
+    height: 48px !important;
+  }
+  .floating-btn svg {
+    width: 24px !important;
+    height: 24px !important;
+  }
+}
+
+/* ===================== FLOATING BUTTONS ===================== */
+.whatsapp-container {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-direction: row-reverse;
+}
+
+.call-container {
+  position: fixed;
+  bottom: 2rem;
+  left: 2rem;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.floating-btn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  flex-shrink: 0;
 }

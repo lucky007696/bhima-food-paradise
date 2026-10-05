@@ -7,17 +7,7 @@ const FloatingCallButton = () => {
   const [showTooltip, setShowTooltip] = useState(false);
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        bottom: '2rem',
-        left: '2rem', // Placed on the left side to avoid overlapping WhatsApp
-        zIndex: 9999,
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.75rem',
-      }}
-    >
+    <div className="call-container">
       {/* Floating Button */}
       <motion.a
         href={`tel:${PHONE}`}
@@ -28,17 +18,10 @@ const FloatingCallButton = () => {
         whileTap={{ scale: 0.9 }}
         onHoverStart={() => setShowTooltip(true)}
         onHoverEnd={() => setShowTooltip(false)}
+        className="floating-btn"
         style={{
-          width: '60px',
-          height: '60px',
-          borderRadius: '50%',
           background: 'linear-gradient(135deg, #f59e0b, #b45309)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
           boxShadow: '0 4px 20px rgba(245, 158, 11, 0.5)',
-          textDecoration: 'none',
-          flexShrink: 0,
           animation: 'call-pulse 2.5s ease-in-out infinite',
         }}
         aria-label="Call Us"

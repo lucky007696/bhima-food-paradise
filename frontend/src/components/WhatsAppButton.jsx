@@ -9,18 +9,7 @@ const WhatsAppButton = () => {
   const [showTooltip, setShowTooltip] = useState(false);
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        bottom: '2rem',
-        right: '2rem',
-        zIndex: 9999,
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.75rem',
-        flexDirection: 'row-reverse',
-      }}
-    >
+    <div className="whatsapp-container">
       {/* Floating Button */}
       <motion.a
         href={WA_LINK}
@@ -33,17 +22,10 @@ const WhatsAppButton = () => {
         whileTap={{ scale: 0.9 }}
         onHoverStart={() => setShowTooltip(true)}
         onHoverEnd={() => setShowTooltip(false)}
+        className="floating-btn"
         style={{
-          width: '60px',
-          height: '60px',
-          borderRadius: '50%',
-        background: 'linear-gradient(135deg, #f59e0b, #b45309)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          background: 'linear-gradient(135deg, #f59e0b, #b45309)',
           boxShadow: '0 4px 20px rgba(245, 158, 11, 0.5)',
-          textDecoration: 'none',
-          flexShrink: 0,
           animation: 'wa-pulse 2.5s ease-in-out infinite',
         }}
         aria-label="Chat on WhatsApp"
