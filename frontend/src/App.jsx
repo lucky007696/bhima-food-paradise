@@ -6,6 +6,7 @@ import Menu from './components/Menu';
 import ReservationForm from './components/ReservationForm';
 import Footer from './components/Footer';
 import WhatsAppButton from './components/WhatsAppButton';
+import FloatingCallButton from './components/FloatingCallButton';
 import Admin from './components/Admin';
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
           <ReservationForm />
           <Footer />
           <WhatsAppButton />
+          <FloatingCallButton />
         </>
       } />
       

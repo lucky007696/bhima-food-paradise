@@ -78,10 +78,6 @@ const Admin = () => {
                 alignItems: 'center',
                 position: 'relative'
               }}>
-                {/* Status Badge */}
-                <div style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'rgba(34,197,94,0.15)', color: '#4ade80', padding: '0.2rem 0.6rem', borderRadius: '50px', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase' }}>
-                  {res.status || 'New'}
-                </div>
 
                 {/* Customer Info */}
                 <div>
@@ -103,18 +99,22 @@ const Admin = () => {
                   </p>
                 </div>
 
-                {/* Guests & Action Button */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <div style={{ background: 'rgba(245,158,11,0.1)', padding: '0.75rem', borderRadius: '50%', color: 'var(--primary)' }}>
-                      <Users size={20} />
-                    </div>
-                    <div>
-                      <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>Party Size</p>
-                      <p style={{ margin: 0, fontSize: '1.2rem', fontWeight: 700 }}>{res.guests} <span style={{ fontSize: '0.9rem', fontWeight: 400 }}>people</span></p>
-                    </div>
+                {/* Guests */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <div style={{ background: 'rgba(245,158,11,0.1)', padding: '0.75rem', borderRadius: '50%', color: 'var(--primary)' }}>
+                    <Users size={20} />
                   </div>
+                  <div>
+                    <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>Party Size</p>
+                    <p style={{ margin: 0, fontSize: '1.2rem', fontWeight: 700 }}>{res.guests} <span style={{ fontSize: '0.9rem', fontWeight: 400 }}>people</span></p>
+                  </div>
+                </div>
 
+                {/* Actions */}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.75rem' }}>
+                  <div style={{ background: 'rgba(34,197,94,0.15)', color: '#4ade80', padding: '0.2rem 0.6rem', borderRadius: '50px', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', alignSelf: 'flex-end' }}>
+                    {res.status || 'New'}
+                  </div>
                   <button 
                     onClick={() => handleComplete(res._id)}
                     style={{
@@ -127,6 +127,8 @@ const Admin = () => {
                       fontWeight: 600,
                       fontFamily: "'Outfit', sans-serif",
                       transition: 'all 0.2s',
+                      width: '100%',
+                      maxWidth: '120px'
                     }}
                     onMouseOver={e => { e.currentTarget.style.background = 'rgba(34, 197, 94, 0.25)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
                     onMouseOut={e => { e.currentTarget.style.background = 'rgba(34, 197, 94, 0.15)'; e.currentTarget.style.transform = 'translateY(0)'; }}
