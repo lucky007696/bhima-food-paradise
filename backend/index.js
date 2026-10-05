@@ -48,7 +48,18 @@ app.post('/api/reservations', async (req, res) => {
   }
 });
 
-app.get('/api/admin/reservations', async (req, res) => {
+// Admin Authentication Middleware
+const adminAuth = (req, res, next) => {
+  const password = req.headers['x-admin-password'];
+  const correctPassword = process.env.ADMIN_PASSWORD || 'bhima123';
+  if (password === correctPassword) {
+    next();
+  } else {
+    res.status(401).json({ error: 'Unauthorized. Incorrect password.' });
+  }
+};
+
+app.get('/api/admin/reservations', adminAuth, async (req, res) => {
   try {
     const reservations = await Reservation.find().sort({ createdAt: -1 });
     res.json(reservations);
@@ -57,7 +68,7 @@ app.get('/api/admin/reservations', async (req, res) => {
   }
 });
 
-app.delete('/api/admin/reservations/:id', async (req, res) => {
+app.delete('/api/admin/reservations/:id', adminAuth, async (req, res) => {
   try {
     await Reservation.findByIdAndDelete(req.params.id);
     res.json({ message: 'Reservation removed successfully' });

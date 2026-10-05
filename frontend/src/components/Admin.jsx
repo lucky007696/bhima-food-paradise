@@ -8,34 +8,87 @@ const Admin = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchReservations = async () => {
-      try {
-        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-        const response = await axios.get(`${API_URL}/api/admin/reservations`);
-        // Sort newest first
-        setReservations(response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
-      } catch (err) {
-        console.error(err);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [passwordInput, setPasswordInput] = useState('');
+  const [authError, setAuthError] = useState('');
+
+  const fetchReservations = async (password) => {
+    setLoading(true);
+    setAuthError('');
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const response = await axios.get(`${API_URL}/api/admin/reservations`, {
+        headers: { 'x-admin-password': password }
+      });
+      // Sort newest first
+      setReservations(response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
+      setIsAuthenticated(true);
+      sessionStorage.setItem('adminPassword', password);
+    } catch (err) {
+      console.error(err);
+      if (err.response && err.response.status === 401) {
+        setAuthError('Incorrect password. Please try again.');
+        setIsAuthenticated(false);
+        sessionStorage.removeItem('adminPassword');
+      } else {
         setError('Failed to fetch reservations.');
-      } finally {
-        setLoading(false);
       }
-    };
-    
-    fetchReservations();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const savedPassword = sessionStorage.getItem('adminPassword');
+    if (savedPassword) {
+      fetchReservations(savedPassword);
+    } else {
+      setLoading(false);
+    }
   }, []);
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (!passwordInput) return;
+    fetchReservations(passwordInput);
+  };
 
   const handleComplete = async (id) => {
     try {
+      const password = sessionStorage.getItem('adminPassword');
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-      await axios.delete(`${API_URL}/api/admin/reservations/${id}`);
+      await axios.delete(`${API_URL}/api/admin/reservations/${id}`, {
+        headers: { 'x-admin-password': password }
+      });
       setReservations(reservations.filter(res => res._id !== id));
     } catch (err) {
       console.error('Failed to complete reservation:', err);
       alert('Failed to remove reservation. Please try again.');
     }
   };
+
+  if (!isAuthenticated && !loading) {
+    return (
+      <div style={{ minHeight: '100vh', background: 'var(--bg-darker)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
+        <div style={{ background: 'var(--bg-card)', padding: '3rem', borderRadius: '20px', width: '100%', maxWidth: '400px', border: '1px solid rgba(255,255,255,0.05)', textAlign: 'center' }}>
+          <h2 style={{ fontFamily: "'Playfair Display', serif", color: 'var(--primary)', marginBottom: '1.5rem' }}>Admin Access</h2>
+          {authError && <div style={{ color: '#f87171', marginBottom: '1rem', fontSize: '0.9rem' }}>{authError}</div>}
+          <form onSubmit={handleLogin}>
+            <input 
+              type="password" 
+              value={passwordInput} 
+              onChange={(e) => setPasswordInput(e.target.value)} 
+              placeholder="Enter admin password"
+              style={{ width: '100%', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(0,0,0,0.3)', color: 'white', marginBottom: '1.5rem', outline: 'none', fontFamily: "'Outfit', sans-serif" }}
+              autoFocus
+            />
+            <button type="submit" className="btn-primary" style={{ width: '100%' }}>Login</button>
+          </form>
+          <Link to="/" style={{ display: 'block', marginTop: '1.5rem', color: 'var(--text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>&larr; Back to Site</Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-darker)', color: 'white', padding: '3rem 0' }}>
