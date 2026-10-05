@@ -143,6 +143,24 @@ app.delete('/api/admin/menu/:id', adminAuth, async (req, res) => {
   }
 });
 
+// Admin Update Menu Item
+app.put('/api/admin/menu/:id', adminAuth, upload.single('image'), async (req, res) => {
+  try {
+    const { name, description, price, category, isVeg } = req.body;
+    const updateData = { name, description, price, category, isVeg: isVeg === 'true' };
+    
+    if (req.file) {
+      updateData.image = req.file.path;
+    }
+    
+    const updatedItem = await MenuItem.findByIdAndUpdate(req.params.id, updateData, { new: true });
+    res.json(updatedItem);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to update item' });
+  }
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
