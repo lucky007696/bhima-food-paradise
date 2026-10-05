@@ -57,6 +57,15 @@ app.get('/api/admin/reservations', async (req, res) => {
   }
 });
 
+app.delete('/api/admin/reservations/:id', async (req, res) => {
+  try {
+    await Reservation.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Reservation removed successfully' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to remove reservation.' });
+  }
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

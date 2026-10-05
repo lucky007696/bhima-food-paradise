@@ -26,6 +26,17 @@ const Admin = () => {
     fetchReservations();
   }, []);
 
+  const handleComplete = async (id) => {
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      await axios.delete(`${API_URL}/api/admin/reservations/${id}`);
+      setReservations(reservations.filter(res => res._id !== id));
+    } catch (err) {
+      console.error('Failed to complete reservation:', err);
+      alert('Failed to remove reservation. Please try again.');
+    }
+  };
+
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-darker)', color: 'white', padding: '3rem 0' }}>
       <div className="container">
@@ -92,15 +103,36 @@ const Admin = () => {
                   </p>
                 </div>
 
-                {/* Guests */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <div style={{ background: 'rgba(245,158,11,0.1)', padding: '0.75rem', borderRadius: '50%', color: 'var(--primary)' }}>
-                    <Users size={20} />
+                {/* Guests & Action Button */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <div style={{ background: 'rgba(245,158,11,0.1)', padding: '0.75rem', borderRadius: '50%', color: 'var(--primary)' }}>
+                      <Users size={20} />
+                    </div>
+                    <div>
+                      <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>Party Size</p>
+                      <p style={{ margin: 0, fontSize: '1.2rem', fontWeight: 700 }}>{res.guests} <span style={{ fontSize: '0.9rem', fontWeight: 400 }}>people</span></p>
+                    </div>
                   </div>
-                  <div>
-                    <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>Party Size</p>
-                    <p style={{ margin: 0, fontSize: '1.2rem', fontWeight: 700 }}>{res.guests} <span style={{ fontSize: '0.9rem', fontWeight: 400 }}>people</span></p>
-                  </div>
+
+                  <button 
+                    onClick={() => handleComplete(res._id)}
+                    style={{
+                      background: 'rgba(34, 197, 94, 0.15)',
+                      border: '1px solid rgba(34, 197, 94, 0.4)',
+                      color: '#4ade80',
+                      padding: '0.6rem 1.2rem',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontWeight: 600,
+                      fontFamily: "'Outfit', sans-serif",
+                      transition: 'all 0.2s',
+                    }}
+                    onMouseOver={e => { e.currentTarget.style.background = 'rgba(34, 197, 94, 0.25)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                    onMouseOut={e => { e.currentTarget.style.background = 'rgba(34, 197, 94, 0.15)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                  >
+                    Complete
+                  </button>
                 </div>
               </div>
             ))}
