@@ -1,3 +1,4 @@
+import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import About from './components/About';
@@ -5,18 +6,25 @@ import Menu from './components/Menu';
 import ReservationForm from './components/ReservationForm';
 import Footer from './components/Footer';
 import WhatsAppButton from './components/WhatsAppButton';
+import Admin from './components/Admin';
 
 function App() {
   return (
-    <>
-      <Navbar />
-      <Hero />
-      <About />
-      <Menu />
-      <ReservationForm />
-      <Footer />
-      <WhatsAppButton />
-    </>
+    <Routes>
+      <Route path="/" element={
+        <>
+          <Navbar />
+          <Hero />
+          <About />
+          <Menu />
+          <ReservationForm />
+          <Footer />
+          <WhatsAppButton />
+        </>
+      } />
+      
+      <Route path="/admin" element={<Admin />} />
+    </Routes>
   );
 }
 

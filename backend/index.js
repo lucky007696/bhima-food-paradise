@@ -22,9 +22,13 @@ app.post('/api/reservations', (req, res) => {
   if (!name || !phone || !date || !time || !guests) {
     return res.status(400).json({ error: 'All fields are required.' });
   }
-  const newReservation = { _id: Date.now().toString(), name, phone, date, time, guests };
+  const newReservation = { _id: Date.now().toString(), name, phone, date, time, guests, status: 'Pending', createdAt: new Date().toISOString() };
   reservations.push(newReservation);
   res.status(201).json({ message: 'Reservation confirmed', reservation: newReservation });
+});
+
+app.get('/api/admin/reservations', (req, res) => {
+  res.json(reservations);
 });
 
 const PORT = process.env.PORT || 5000;
