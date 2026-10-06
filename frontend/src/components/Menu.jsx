@@ -221,8 +221,9 @@ const Menu = () => {
                           gap: '0.75rem',
                         }}>
                           {items.map((item, index) => (
-                            <motion.div
+                            <motion.article
                               key={item._id}
+                              itemScope itemType="https://schema.org/MenuItem"
                               initial={{ opacity: 0, y: 10 }}
                               animate={{ opacity: 1, y: 0 }}
                               transition={{ delay: index * 0.03 }}
@@ -249,6 +250,7 @@ const Menu = () => {
                                 border: '1px solid rgba(245,158,11,0.2)',
                               }}>
                                 <img
+                                  itemProp="image"
                                   src={item.image && !item.image.includes('placehold.co') ? item.image : categoryImages[category]}
                                   alt={item.name}
                                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
@@ -257,7 +259,7 @@ const Menu = () => {
 
                               {/* Item Info */}
                               <div style={{ flex: 1, minWidth: 0 }}>
-                                <p style={{
+                                <h4 itemProp="name" style={{
                                   fontFamily: "'Outfit', sans-serif",
                                   fontWeight: 700,
                                   fontSize: '0.95rem',
@@ -266,10 +268,11 @@ const Menu = () => {
                                   whiteSpace: 'nowrap',
                                   overflow: 'hidden',
                                   textOverflow: 'ellipsis',
+                                  margin: 0,
                                 }}>
                                   {item.name}
-                                </p>
-                                <p style={{
+                                </h4>
+                                <p itemProp="description" style={{
                                   fontFamily: "'Outfit', sans-serif",
                                   fontSize: '0.78rem',
                                   color: 'var(--text-muted)',
@@ -278,22 +281,29 @@ const Menu = () => {
                                   WebkitLineClamp: 2,
                                   WebkitBoxOrient: 'vertical',
                                   overflow: 'hidden',
+                                  margin: 0,
                                 }}>
                                   {item.description}
                                 </p>
                               </div>
 
                               {/* Price */}
-                              <div style={{
-                                flexShrink: 0,
-                                fontFamily: "'Outfit', sans-serif",
-                                fontWeight: 800,
-                                fontSize: '1.05rem',
-                                color: 'var(--primary)',
-                              }}>
-                                ₹{item.price}
+                              <div 
+                                itemProp="offers" 
+                                itemScope 
+                                itemType="https://schema.org/Offer"
+                                style={{
+                                  flexShrink: 0,
+                                  fontFamily: "'Outfit', sans-serif",
+                                  fontWeight: 800,
+                                  fontSize: '1.05rem',
+                                  color: 'var(--primary)',
+                                }}
+                              >
+                                <meta itemProp="priceCurrency" content="INR" />
+                                ₹<span itemProp="price">{item.price}</span>
                               </div>
-                            </motion.div>
+                            </motion.article>
                           ))}
                         </div>
                       </div>
