@@ -75,9 +75,19 @@ const About = () => {
               <p style={{ fontFamily: "'Outfit', sans-serif", color: 'var(--text-muted)', fontSize: '1rem', lineHeight: 1.9, marginBottom: '1.2rem' }}>
                 Inspired by the mythological hero Bhima — known for his immense strength and legendary appetite — we bring you a dining experience fit for legends.
               </p>
-              <p style={{ fontFamily: "'Outfit', sans-serif", color: 'var(--text-muted)', fontSize: '1rem', lineHeight: 1.9, marginBottom: '2.5rem' }}>
+              <p style={{ fontFamily: "'Outfit', sans-serif", color: 'var(--text-muted)', fontSize: '1rem', lineHeight: 1.9, marginBottom: '1.2rem' }}>
                 Located in the heart of <strong style={{ color: 'rgba(255,255,255,0.85)' }}>Inkollu, Andhra Pradesh</strong>, we craft every dish with the finest ingredients, rich spices, and recipes passed down through generations.
               </p>
+
+              <div style={{ marginBottom: '2.5rem' }}>
+                <h3 style={{ fontSize: '1.2rem', color: 'white', marginBottom: '0.8rem', fontWeight: 600 }}>Restaurant Amenities for Travelers & Families:</h3>
+                <ul style={{ listStyleType: 'disc', paddingLeft: '1.5rem', color: 'var(--text-muted)', fontFamily: "'Outfit', sans-serif", lineHeight: 1.8 }}>
+                  <li><strong>Ample Parking</strong> for cars and private buses</li>
+                  <li><strong>Clean Washrooms</strong> perfect for transit travelers</li>
+                  <li><strong>Quick Service</strong> to get you back on the road</li>
+                  <li><strong>Comfortable Dine-in & Fast Takeaway</strong> options</li>
+                </ul>
+              </div>
 
               <motion.a
                 href="#menu"
